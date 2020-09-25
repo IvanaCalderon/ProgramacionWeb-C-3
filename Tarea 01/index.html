@@ -10,7 +10,6 @@
             <h4>Formulario prevencion del Covid</h4>
         </header>
         <main class= "container">
-            
             <form>
                 <div class="form-group">
                     <label for="ubicacion">Ubicación</label>
@@ -40,14 +39,133 @@
                     <label for="correo">Correo electronico</label>
                     <input class="form-control" type="email" id="correo"/>
                 </div>
-                <button type="button" class="btn btn-dark">Submit</button>
-
-
-
+                <button type="button" class="btn btn-dark" id="btnEnviar">Agregar registro</button>
             </form>
+            <h4>Registro</h4>
+            <button type="button" class="btn btn-danger" id="btnEliminar">Eliminar todo</button>
+
+            <table class="table table-stripped">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Ubicación</th>
+                        <th>Latitud</th>
+                        <th>Longitud</th>
+                        <th>Fecha</th>
+                        <th>Tipo de violación</th>
+                        <th>Comentario</th>
+                        <th>Correo electrónico</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tablaRegistros">
+                </tbody>
+            </table>
         
         </main>
-        <footer></footer>
-        
+        <footer>
+            <span>Hecho por Ivana Calderon</span>
+        </footer>
+        <script type="text/javascript">
+            var registros = [];
+            
+            var ubicacion = document.getElementById("ubicacion");
+            ubicacion.addEventListener('keyup', function(){
+                localStorage.setItem("ubicacion",ubicacion.value);
+            });
+            ubicacion.value = localStorage.getItem("ubicacion");
+
+            var latitud = document.getElementById("latitud");
+            latitud.addEventListener('keyup', function(){
+                localStorage.setItem("latitud", latitud.value);
+            });
+            latitud.value = localStorage.getItem("latitud");
+            
+            var longitud = document.getElementById("longitud");
+            longitud.addEventListener('keyup', function(){
+                localStorage.setItem("longitud", longitud.value);
+            });
+            longitud.value = localStorage.getItem("longitud");
+
+            var fecha = document.getElementById("fecha");
+            fecha.addEventListener('keyup', function(){
+                localStorage.setItem("fecha", fecha.value);
+            });
+            fecha.value = localStorage.getItem("fecha");
+
+            var tipoviolacion = document.getElementById("tipoviolacion");
+            tipoviolacion.addEventListener('keyup', function(){
+                localStorage.setItem("tipoviolacion", tipoviolacion.value);
+            });
+            tipoviolacion.value = localStorage.getItem("tipoviolacion");
+
+            var comentario = document.getElementById("comentario");
+            comentario.addEventListener('keyup', function(){
+                localStorage.setItem("comentario", comentario.value);
+            });
+            comentario.value = localStorage.getItem("comentario");
+            
+            var correo = document.getElementById("correo");
+            correo.addEventListener('keyup', function(){
+                localStorage.setItem("correo", correo.value);
+            });
+            correo.value = localStorage.getItem("correo");
+
+            var mostrarRegistros = function() {
+                var tablaRegistros = document.getElementById("tablaRegistros");
+                tablaRegistros.innerHTML = "";
+                var registrosSerializados = localStorage.getItem("registro");
+                if(registrosSerializados != null) {
+                    registros = JSON.parse(registrosSerializados);
+                    if(registros.length> 0) {
+                        for(var i =0; i<registros.length;i++) {
+                            var registro = registros[i];
+                            var fila = "<tr>";
+                            fila += "<td>" + (i+1) + "</td>";
+                            fila += "<td>" + registro.ubicacion + "</td>";
+                            fila += "<td>" + registro.latitud + "</td>";
+                            fila += "<td>" + registro.longitud + "</td>";
+                            fila += "<td>" + registro.fecha + "</td>";
+                            fila += "<td>" + registro.tipoviolacion + "</td>";
+                            fila += "<td>" + registro.comentario + "</td>";
+                            fila += "<td>" + registro.correo + "</td>";
+                            fila += "<td></td>";
+                            fila += "</tr>";
+                            tablaRegistros.innerHTML += fila;
+                        }
+                    }
+                }
+            }
+            var boton = document.getElementById("btnEnviar");
+            boton.addEventListener('click', function(){
+                var miObjeto = { 
+                    ubicacion: ubicacion.value,
+                    latitud: latitud.value,
+                    longitud: longitud.value,
+                    fecha: fecha.value,
+                    tipoviolacion: tipoviolacion.value,
+                    comentario: comentario.value,
+                    correo: correo.value
+                };
+
+                console.log(miObjeto);
+                registros.push(miObjeto);
+                console.log(registros);
+                var registrosSerializados = JSON.stringify(registros);
+                localStorage.setItem("registro", registrosSerializados);
+                mostrarRegistros();
+            });
+
+            var botonEliminar = document.getElementById("btnEliminar");
+            botonEliminar.addEventListener('click',function(){
+                var r = confirm("¿Seguro que quieres eliminar los registros?");
+                if (r == true) {
+                    localStorage.removeItem("registro");
+                    mostrarRegistros();
+                }            
+            });
+
+            mostrarRegistros();
+        </script> 
     </body>
 </html>
